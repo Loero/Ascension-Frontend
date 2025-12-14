@@ -7,7 +7,8 @@
     // splash + audio
     const splash = document.getElementById('splash');
     const audio = document.getElementById('page-audio');
-    const DEFAULT_AUDIO_VOLUME = 0.05; // halkabb (10%)
+    const pillAudio = document.getElementById('pill-audio');
+    const DEFAULT_AUDIO_VOLUME = 0.05; // halkabb (5%)
 
     function revealFromSplash() {
         if (splash) {
@@ -70,6 +71,12 @@
         // egér / érintés
         splash.addEventListener('click', (e) => {
             e.preventDefault();
+            if (pillAudio) {
+                pillAudio.volume = DEFAULT_AUDIO_VOLUME;
+                pillAudio.muted = false;
+                pillAudio.currentTime = 0;
+                pillAudio.play().catch(()=>{});
+            }
             revealFromSplash();
         });
 
@@ -77,6 +84,12 @@
         splash.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
                 e.preventDefault();
+                if (pillAudio) {
+                    pillAudio.volume = DEFAULT_AUDIO_VOLUME;
+                    pillAudio.muted = false;
+                    pillAudio.currentTime = 0;
+                    pillAudio.play().catch(()=>{});
+                }
                 revealFromSplash();
             }
         });

@@ -7,15 +7,19 @@
     --anthracite: #2E2E2E;    /* Anthracite */
     --shadow-chrome: #353839; /* Shadow Chrome */
 
-    --accent: #ff6a00;
+    --accent: #2E2E2E;
     --bg: linear-gradient(180deg, var(--graphite) 0%, var(--charcoal) 60%, #0b0b0b 100%);
     --text: #f5f5f5;
     --muted: #bdbdbd;
     --glow: rgba(255,106,0,0.25);
 
-    --pill-duration: 4s;
-    --splash-fade-duration: 4s;
-    --page-anim-duration: 2200ms;
+    --pill-duration: 2s;
+    --splash-fade-duration: 2s;
+    --page-anim-duration: 1200ms;
+    --section-anim-duration: 1800ms; /* Duration for section animations */
+    --chrome-gradient-duration: 5s; /* Duration for chrome gradient animations (faster, more visible) */
+    --chrome-gradient-opacity: 0.2; /* stronger but still subtle */
+    --chrome-sheen-duration: 6s; /* sheen movement duration */
     --page-anim-delay-header: 500ms;
     --page-anim-delay-section: 900ms;
     --video-transition: 1.6s;
@@ -43,7 +47,8 @@ body::-webkit-scrollbar {
 
 body, html {
     height: 100%;
-    font-family: 'Bebas Neue', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    /* Use Cinzel webfont (imported in index.html), fall back to Copperplate/Gothic variants */
+    font-family: 'Cinzel', 'Copperplate Gothic', 'Copperplate', 'Bebas Neue', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     scroll-behavior: smooth;
@@ -127,12 +132,20 @@ header h1 {
         0 0 12px rgba(255,255,255,0.04),
         0 0 22px var(--glow),
         0 6px 25px rgba(0,0,0,0.6);
+    font-family: inherit;
+    letter-spacing: 0.06em;
 }
 
 header p {
     font-size: 2rem;
     margin-top: 20px;
     color: var(--muted);
+}
+
+/* Alapértelmezett nagy címméret a headerben */
+header .header-content h1 {
+    font-size: 6rem;
+    line-height: 1;
 }
 
 header h1, header p {
@@ -148,7 +161,7 @@ header.shrink {
 
 /* Szöveg méretezés scroll hatásra */
 header.shrink .header-content h1 {
-    font-size: 3rem; /* kisebb címméret */
+    font-size: 3rem; /* kisebb címméret görgetéskor */
 }
 
 header.shrink .header-content p {
@@ -186,24 +199,26 @@ section p {
     display: inline-block;
     padding: 15px 40px;
     font-size: 1.4rem;
-    background: linear-gradient(180deg, rgba(255,106,0,0.98) 0%, rgba(255,86,10,0.95) 100%);
-    color: #0b0b0b;
+    /* Chrome-style grey/black gradient */
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(30,30,30,0.98) 100%);
+    color: var(--text);
     border-radius: 8px;
     text-decoration: none;
     cursor: pointer;
     box-shadow:
         0 6px 18px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.12),
-        0 0 28px rgba(255,106,0,0.12);
-    border: 1px solid rgba(255,106,0,0.12);
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 0 28px rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.03);
     transition: all 0.3s ease;
-    animation: float-btn 3s infinite ease-in-out alternate;
-    font-family: 'Bebas Neue', sans-serif;
+    will-change: transform;
+    animation: float-btn 4s ease-in-out infinite;
+    font-family: inherit;
 }
 
 .btn-accent:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(255,106,0,0.5);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.6), 0 0 30px rgba(255,255,255,0.035);
 }
 
 /* Animációk */
@@ -213,8 +228,13 @@ section p {
 }
 
 @keyframes float-btn {
-    0% { transform: translateY(0);}
-    100% { transform: translateY(-10px);}
+    0%  { transform: translateY(0) translateX(0) rotate(0deg); }
+    15% { transform: translateY(-6px) translateX(-2px) rotate(-0.6deg); }
+    30% { transform: translateY(-10px) translateX(2px) rotate(0.6deg); }
+    50% { transform: translateY(-8px) translateX(-1px) rotate(-0.3deg); }
+    70% { transform: translateY(-6px) translateX(1px) rotate(0.4deg); }
+    85% { transform: translateY(-3px) translateX(-1px) rotate(-0.2deg); }
+    100%{ transform: translateY(0) translateX(0) rotate(0deg); }
 }
 
 /* Section reveal */
@@ -230,8 +250,8 @@ header.shrink .overlay {
 
 /* Page load fade-in */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(8px) scale(0.998); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* when JS sets .page-loaded on body, play the intro animations */
@@ -241,8 +261,34 @@ header.shrink .overlay {
 }
 
 .page-loaded section {
-    animation: fadeInUp var(--page-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
     animation-delay: var(--page-anim-delay-section);
+}
+
+/* subtle staggered reveal for section children */
+.chrome-section .text h2,
+.chrome-section .text p,
+.chrome-section .text .btn-accent,
+.ba-frame {
+    opacity: 0;
+    transform: translateY(6px) scale(0.998);
+}
+
+.page-loaded .chrome-section .text h2 {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: calc(var(--page-anim-delay-section) + 0ms);
+}
+.page-loaded .chrome-section .text p {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: calc(var(--page-anim-delay-section) + 120ms);
+}
+.page-loaded .chrome-section .text .btn-accent {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: calc(var(--page-anim-delay-section) + 240ms);
+}
+.page-loaded .ba-frame {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: calc(var(--page-anim-delay-section) + 200ms);
 }
 
 /* Full-page black fade-in */
@@ -381,6 +427,13 @@ body.splash-visible { overflow: hidden; }
         inset 0 1px 0 rgba(255,255,255,0.03),
         0 0 30px rgba(255,106,0,0.04); /* subtle accent glow */
     border: 1px solid rgba(255,255,255,0.03);
+    will-change: transform;
+    animation: ba-float 6s ease-in-out infinite;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    /* enforce rounded clipping during transforms */
+    clip-path: inset(0 round 12px);
 }
 
 /* képek rétegezve, before alatt, after fölött (tetszés szerint csúsztatható később) */
@@ -389,7 +442,15 @@ body.splash-visible { overflow: hidden; }
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    /* show the full image without cropping */
+    object-fit: contain;
+    object-position: center center;
+    background: #000; /* fill empty space when using contain */
+    /* match parent's rounded corners to avoid square artifacts on transform */
+    border-radius: inherit;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform, opacity;
     display: block;
     transform-origin: center;
     transition: transform 900ms ease, opacity 900ms ease;
@@ -426,7 +487,8 @@ body.splash-visible { overflow: hidden; }
     backdrop-filter: blur(6px);
     box-shadow: 0 4px 16px rgba(0,0,0,0.45), 0 0 18px rgba(255,106,0,0.03);
     transition: transform 220ms ease, opacity 220ms ease;
-    animation: float-label 3s ease-in-out infinite;
+    will-change: transform;
+    animation: float-label 4s ease-in-out infinite;
 }
 
 /* pozíciók */
@@ -435,9 +497,11 @@ body.splash-visible { overflow: hidden; }
 
 /* floating animáció */
 @keyframes float-label {
-    0%   { transform: translateY(0px);   opacity: 1; }
-    50%  { transform: translateY(-6px);  opacity: 0.95; }
-    100% { transform: translateY(0px);   opacity: 1; }
+    0%   { transform: translateY(0px) translateX(0);   opacity: 1; }
+    20%  { transform: translateY(-4px) translateX(-2px);  opacity: 0.98; }
+    50%  { transform: translateY(-6px) translateX(1px);   opacity: 0.96; }
+    80%  { transform: translateY(-3px) translateX(-1px);  opacity: 0.98; }
+    100% { transform: translateY(0px) translateX(0);   opacity: 1; }
 }
 
 /* interakció: hoverkor fedjük be az after képet (opcionális) */
@@ -465,4 +529,51 @@ body.splash-visible { overflow: hidden; }
     background: radial-gradient(closest-side, rgba(255,255,255,0.03), transparent 40%);
     pointer-events: none;
     filter: blur(18px);
+}
+
+/* Subtle animated chrome gradient overlay */
+.chrome-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg,
+        rgba(255,255,255,0.06) 0%,
+        rgba(255,106,0,0.14) 25%,
+        rgba(255,255,255,0.04) 50%,
+        rgba(20,20,20,0.12) 75%,
+        rgba(255,255,255,0.04) 100%);
+    /* larger background for smoother shifting */
+    background-size: 400% 400%;
+    mix-blend-mode: overlay;
+    opacity: var(--chrome-gradient-opacity);
+    transform: translateZ(0);
+    animation: chromeGradientShift var(--chrome-gradient-duration) ease-in-out infinite alternate;
+}
+
+@keyframes chromeGradientShift {
+    0%   { background-position: 10% 30%; }
+    50%  { background-position: 90% 70%; }
+    100% { background-position: 10% 30%; }
+}
+
+/* Animate the subtle central sheen so it's more visible */
+.chrome-section::before {
+    animation: chromeSheen var(--chrome-sheen-duration) ease-in-out infinite;
+}
+
+@keyframes chromeSheen {
+    0% { transform: translateX(-8px) translateY(-18px) scale(1); opacity: 0.06; }
+    40% { transform: translateX(18px) translateY(6px) scale(1.06); opacity: 0.12; }
+    100% { transform: translateX(-8px) translateY(-18px) scale(1); opacity: 0.06; }
+}
+
+/* laza lebegő + enyhe remegés a before/after keretnek */
+@keyframes ba-float {
+    0%  { transform: translateY(0) translateX(0) rotate(0deg); }
+    25% { transform: translateY(-3px) translateX(-1px) rotate(-0.25deg); }
+    50% { transform: translateY(-2px) translateX(1px) rotate(0.2deg); }
+    75% { transform: translateY(-4px) translateX(-1px) rotate(-0.15deg); }
+    100%{ transform: translateY(0) translateX(0) rotate(0deg); }
 }
