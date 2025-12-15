@@ -13,7 +13,10 @@
 
     <!-- SPLASH: fekete pirula (kép fájl: img/blackpill.png) -->
     <div id="splash" class="splash-overlay" role="button" aria-label="Kattints a kezdéshez" tabindex="0">
-        <img src="img/blackpill.png" alt="Black pill" class="pill-img"> 
+        <div class="pill-wrap">
+            <img src="img/blackpill.png" alt="Black pill" class="pill-img">
+            <div class="pill-caption" aria-hidden="false">take the pill</div>
+        </div>
     </div>
 
     <header id="main-header">
@@ -25,6 +28,9 @@
 
         <!-- Króm overlay -->
         <div class="overlay"></div>
+
+        <!-- Hangerő gomb -->
+    <button id="volume-toggle" class="volume-toggle" aria-label="Hang ki/be" title="Hang ki/be"></button>
 
         <!-- Szöveg -->
         <div class="header-content">
@@ -39,7 +45,7 @@
                 <h2>Mi a looksmaxxing?</h2>
                 <p>A looksmaxxing egy önfejlesztő folyamat, amely segít a külső megjelenés javításában, az önbizalom növelésében és a pozitív életminőség elérésében.</p>
                 <p>Előnyei közé tartozik a fokozott önbizalom, jobb társas kapcsolatok, és a személyes megjelenés tudatos kezelése.</p>
-                <a href="Bejelentkezes.html" class="btn-accent">Kezdés</a>
+                <a href="authm.html" class="btn-accent">Kezdés</a>
             </div>
 
             <!-- Before / After képkeret -->

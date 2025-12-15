@@ -92,6 +92,31 @@ header {
     transition: height 1.4s ease;
 }
 
+/* Hangerő gomb elhelyezés a jobb felső sarokban */
+.volume-toggle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    background: rgba(0,0,0,0.4);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: transform 160ms ease, background 160ms ease, opacity 160ms ease;
+}
+
+.volume-toggle:hover { transform: scale(1.06); }
+.volume-toggle:active { transform: scale(0.98); }
+.volume-toggle[aria-pressed="true"] { background: rgba(0,0,0,0.6); }
+
+/* ikon csere állapottól függően (JS frissíti) */
+.volume-toggle.muted::after { content: "🔇"; }
+.volume-toggle:not(.muted)::after { content: "🔊"; }
+.volume-toggle { font-size: 18px; line-height: 1; }
+
 /* Header alap háttér */
 .header-bg {
     position: absolute;
@@ -340,7 +365,67 @@ body.page-loaded::before {
     transition: opacity var(--splash-fade-duration) ease, visibility var(--splash-fade-duration) ease;
     opacity: 1;
     visibility: visible;
+    /* csak a pirula legyen kattintható: az overlay maga ne fogadjon kattintást */
+    pointer-events: none;
+}
+.pill-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; pointer-events: auto; }
+.pill-caption {
+    color: var(--muted);
+    font-family: 'Cinzel', 'Bebas Neue', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    transition: opacity 200ms ease, transform 200ms ease;
     cursor: pointer;
+    text-shadow:
+        0 0 6px rgba(255,106,0,0.25),
+        0 0 12px rgba(255,106,0,0.15);
+}
+.pill-caption:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    color: #fff;
+    text-shadow:
+        0 0 8px rgba(255,140,0,0.5),
+        0 0 16px rgba(255,140,0,0.35),
+        0 0 28px rgba(255,140,0,0.25),
+        0 0 40px rgba(255,140,0,0.15);
+    animation: neon-pulse 1.8s ease-in-out infinite;
+}
+.pill-caption:active { transform: translateY(1px) scale(0.98); }
+
+/* Hover kizárólag a feliraton aktiválja a neon és scale hatást */
+
+@keyframes neon-pulse {
+    0%, 100% { text-shadow:
+        0 0 8px rgba(255,140,0,0.5),
+        0 0 16px rgba(255,140,0,0.35),
+        0 0 28px rgba(255,140,0,0.25),
+        0 0 40px rgba(255,140,0,0.15); }
+    50% { text-shadow:
+        0 0 6px rgba(255,180,0,0.45),
+        0 0 12px rgba(255,180,0,0.30),
+        0 0 22px rgba(255,180,0,0.20),
+        0 0 32px rgba(255,180,0,0.12); }
+}
+
+/* Aktivált állapot: kattintás után maradjon nagyobb */
+.pill-caption.active {
+    transform: translateY(-2px) scale(1.06);
+    opacity: 1;
+}
+
+/* Fade behavior for caption too */
+.pill-caption.fade {
+    transition: opacity 2s ease;
+    opacity: 0 !important;
+    pointer-events: none; /* ne tartsa aktívan a hover állapotot */
+}
+/* Hover esetén is maradjon a fade */
+.pill-wrap:hover .pill-caption.fade,
+.pill-caption.fade:hover {
+    opacity: 0 !important;
 }
 
 .splash-overlay.hidden {
@@ -358,18 +443,56 @@ body.page-loaded::before {
     filter: drop-shadow(0 16px 40px rgba(0,0,0,0.7)) saturate(1.05);
     transform-origin: center;
     transition: transform 220ms ease;
+    /* finom lebegés */
+    animation: pill-float 4.5s ease-in-out infinite;
+    position: relative;
+    /* csak a felirat legyen interaktív */
+    pointer-events: none;
+    cursor: default;
 }
 
-/* 4 másodperces zsugorodó animáció */
-@keyframes pill-shrink {
-    0%   { transform: scale(1);   opacity: 1; }
-    80%  { transform: scale(0.18); opacity: 0.5; }
-    100% { transform: scale(0);   opacity: 0; }
+/* kattintás utáni finom eltűnés (fade to black) */
+.pill-img.fade {
+    transition: opacity 2s ease;
+    opacity: 0;
 }
 
-.pill-img.shrink {
-    animation: pill-shrink var(--pill-duration) cubic-bezier(.22,.9,.32,1) forwards;
+/* lebegés animáció: enyhe fel-le mozgás és mikro-rotáció */
+@keyframes pill-float {
+    0%   { transform: translateY(0) rotateZ(0deg) scale(1); }
+    50%  { transform: translateY(-6px) rotateZ(0.6deg) scale(1.02); }
+    100% { transform: translateY(0) rotateZ(0deg) scale(1); }
 }
+
+/* sheen effekt: átfutó fénycsík */
+.pill-img::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0) 35%,
+        rgba(255,255,255,0.20) 50%,
+        rgba(255,255,255,0) 65%);
+    mix-blend-mode: screen;
+    opacity: 0.0;
+    transform: translateX(-120%) skewX(-18deg);
+    pointer-events: none;
+    animation: pill-sheen 6s ease-in-out infinite;
+}
+
+@keyframes pill-sheen {
+    0%, 20% { opacity: 0; transform: translateX(-120%) skewX(-18deg); }
+    30%     { opacity: 0.18; }
+    50%     { opacity: 0.24; transform: translateX(120%) skewX(-18deg); }
+    60%,100%{ opacity: 0; transform: translateX(120%) skewX(-18deg); }
+}
+
+/* hover: minimális billenés */
+.pill-img:hover { transform: translateY(-2px) rotateZ(0.4deg) scale(1.03); }
+
+/* kattintáskor enyhe "megnyomás" */
+.pill-img:active { transform: translateY(1px) scale(0.98); }
+
 
 /* biztosítjuk, hogy a fő tartalom ne legyen interaktív a splash alatt */
 body.splash-visible { overflow: hidden; }
