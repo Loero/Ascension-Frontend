@@ -102,27 +102,27 @@ html, body {
 }
 /* Középre igazítás minden mainwindow-content blokknak */
 .mainwindow-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    min-height: 70vh; /* legalább 70% a képernyő magasságából */
-    padding: 24px 18px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Címsor stílus */
 .mainwindow-content h2 {
     font-family: 'Cinzel', serif;
-    font-size: 3rem;
-    margin-bottom: 16px;
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 0.08em;
 }
 
 /* Bekezdés stílus */
-.mainwindow-content p {
-    font-size: 1.3rem;
-    color: #333;
-    max-width: 600px;
+.mainwindow-content > p {
+    font-size: 1rem;
+    color: var(--muted);
+    text-align: center;
     line-height: 1.6;
+    margin-bottom: 8px;
 }
 
 /* Auth page styles */
@@ -422,4 +422,471 @@ input::placeholder {
 @keyframes successPulse {
   0%, 100% { opacity: 0.8; }
   50% { opacity: 1; }
+}
+
+/* === TEST OLDAL SPECIFIKUS STÍLUSOK === */
+
+/* Adatbeviteli szekció */
+.data-input-section {
+    margin: 40px auto;
+    max-width: 900px;
+    padding: 30px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+}
+
+.data-input-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 24px;
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: rgba(200,200,200,0.6);
+    box-shadow: 0 0 12px rgba(150,150,150,0.3);
+}
+
+.form-group input::placeholder {
+    color: rgba(255,255,255,0.3);
+}
+
+.btn-calculate {
+    grid-column: 1 / -1;
+    padding: 14px 28px;
+    margin-top: 12px;
+    background: linear-gradient(135deg, rgba(120,120,120,0.9), rgba(80,80,80,0.9));
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.btn-calculate:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(140,140,140,0.9), rgba(100,100,100,0.9));
+    box-shadow: 0 6px 20px rgba(255,255,255,0.2);
+}
+
+.btn-calculate:active {
+    transform: translateY(0);
+}
+
+/* Eredmény szekciók */
+.result-section,
+.training-section {
+    margin: 40px auto;
+    max-width: 900px;
+    padding: 30px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-section h3,
+.training-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 24px;
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+.result-card {
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-card.highlight {
+    background: rgba(120,120,120,0.15);
+    border-color: rgba(200,200,200,0.4);
+}
+
+.result-label {
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.result-value {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--text);
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.macro-breakdown {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+}
+
+.macro-breakdown h4 {
+    margin-bottom: 16px;
+    font-size: 1.3rem;
+    letter-spacing: 0.08em;
+}
+
+.macro-breakdown p {
+    margin: 8px 0;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+/* Edzésterv */
+.plan-card {
+    padding: 30px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.plan-card h4 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    letter-spacing: 0.08em;
+    text-align: center;
+}
+
+.day-plan {
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid rgba(180,180,180,0.6);
+    border-radius: 4px;
+}
+
+.day-plan h5 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: rgba(200,200,200,0.9);
+}
+
+.day-plan ul {
+    list-style: none;
+    padding: 0;
+}
+
+.day-plan li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text);
+}
+
+.day-plan li:last-child {
+    border-bottom: none;
+}
+
+.plan-note {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(120,120,120,0.15);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-style: italic;
+}
+
+.goal-advice {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(0,0,0,0.4);
+    border-left: 4px solid rgba(150,150,150,0.8);
+    border-radius: 6px;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+/* Tracker szekció */
+.tracker-section {
+    margin: 40px auto;
+    max-width: 1000px;
+    padding: 30px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+}
+
+.tracker-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+.tracker-info {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.exercise-input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 24px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.exercise-input-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.exercise-input-item label {
+    margin-bottom: 8px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.weight-input {
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.weight-input:focus {
+    outline: none;
+    border-color: rgba(200,200,200,0.6);
+    box-shadow: 0 0 12px rgba(150,150,150,0.3);
+}
+
+.btn-save-workout {
+    width: 100%;
+    padding: 14px 28px;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, rgba(100,100,100,0.9), rgba(60,60,60,0.9));
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-save-workout:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(120,120,120,0.9), rgba(80,80,80,0.9));
+    box-shadow: 0 6px 20px rgba(255,255,255,0.2);
+}
+
+/* Tracker történet */
+.tracker-history {
+    padding: 24px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+}
+
+.tracker-history h4 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+    letter-spacing: 0.08em;
+}
+
+.exercise-group {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+}
+
+.exercise-group h5 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(200,200,200,0.2);
+    color: rgba(200,200,200,0.9);
+    letter-spacing: 0.05em;
+}
+
+.progress-chart {
+    margin-top: 12px;
+}
+
+.workout-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.workout-entry:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.workout-entry.latest {
+    border-color: rgba(150,150,150,0.5);
+    background: rgba(100,100,100,0.15);
+}
+
+.workout-info {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.workout-date {
+    color: var(--muted);
+    font-size: 0.9rem;
+    min-width: 100px;
+}
+
+.workout-details {
+    font-weight: bold;
+    color: var(--text);
+}
+
+.workout-volume {
+    color: rgba(180,180,180,0.9);
+    font-size: 0.95rem;
+}
+
+.improvement {
+    color: #e0e0e0;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.decline {
+    color: #707070;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.neutral {
+    color: #999;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.btn-delete {
+    padding: 8px 12px;
+    background: rgba(255,0,0,0.2);
+    border: 1px solid rgba(255,0,0,0.4);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+    background: rgba(255,0,0,0.4);
+    transform: scale(1.1);
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-style: italic;
+}
+
+/* Reszponzív */
+@media (max-width: 1024px) {
+    .form-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .exercise-input-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .exercise-input-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .workout-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .data-input-section,
+    .result-section,
+    .training-section,
+    .tracker-section {
+        padding: 20px;
+        margin: 30px 16px;
+    }
 }
