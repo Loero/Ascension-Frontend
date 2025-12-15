@@ -251,7 +251,9 @@ function generateExerciseInputs(exercises) {
 
 // Edzés session mentése
 function saveWorkoutSession() {
-    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const timestamp = now.getTime(); // Timestamp a pontos rendezéshez
     const sessionData = [];
     let hasData = false;
 
@@ -263,10 +265,11 @@ function saveWorkoutSession() {
         if (weight && weight > 0) {
             hasData = true;
             sessionData.push({
-                id: Date.now() + Math.random(),
+                id: timestamp + Math.random(), // Egyedi ID
                 exercise,
                 weight,
-                date: today
+                date: today,
+                timestamp: timestamp // Pontos időbélyeg a rendezéshez
             });
         }
     });
@@ -303,9 +306,6 @@ function loadWorkouts() {
         return;
     }
 
-    // Rendezés dátum szerint (legújabb első)
-    workouts.sort((a, b) => new Date(b.date) - new Date(a.date));
-
     // Csoportosítás gyakorlat szerint
     const grouped = {};
     workouts.forEach(w => {
@@ -317,26 +317,41 @@ function loadWorkouts() {
 
     let html = '';
     for (const [exercise, records] of Object.entries(grouped)) {
+        // Rendezés timestamp/dátum szerint (legújabb először)
+        records.sort((a, b) => {
+            // Ha van timestamp, azt használjuk (pontosabb)
+            if (a.timestamp && b.timestamp) {
+                return b.timestamp - a.timestamp;
+            }
+            // Ha nincs, akkor dátum string alapján
+            return new Date(b.date) - new Date(a.date);
+        });
+        
         html += `<div class="exercise-group">`;
         html += `<h5>${exercise}</h5>`;
         html += `<div class="progress-chart">`;
         
         records.forEach((w, index) => {
-            const isNew = index === 0;
-            const improvement = index < records.length - 1 
-                ? ((w.weight - records[index + 1].weight) / records[index + 1].weight * 100).toFixed(1)
-                : null;
+            const isLatest = index === 0;
+            // Csak a legújabbnál számoljuk ki az előzőhöz képesti változást
+            let improvement = null;
+            
+            if (isLatest && records.length > 1) {
+                const previousWeight = parseFloat(records[1].weight);
+                const currentWeight = parseFloat(w.weight);
+                improvement = ((currentWeight - previousWeight) / previousWeight * 100).toFixed(1);
+            }
 
             html += `
-                <div class="workout-entry ${isNew ? 'latest' : ''}">
+                <div class="workout-entry ${isLatest ? 'latest' : ''}">
                     <div class="workout-info">
                         <span class="workout-date">${formatDate(w.date)}</span>
                         <span class="workout-details">${w.weight}kg</span>
-                        ${improvement !== null && improvement > 0 
+                        ${isLatest && improvement !== null && parseFloat(improvement) > 0 
                             ? `<span class="improvement">↗ +${improvement}%</span>` 
-                            : improvement !== null && improvement < 0 
+                            : isLatest && improvement !== null && parseFloat(improvement) < 0 
                             ? `<span class="decline">↘ ${improvement}%</span>`
-                            : improvement === 0
+                            : isLatest && improvement !== null && parseFloat(improvement) === 0
                             ? `<span class="neutral">→ 0%</span>`
                             : ''}
                     </div>
