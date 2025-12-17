@@ -246,6 +246,19 @@ section p {
     box-shadow: 0 12px 25px rgba(0,0,0,0.6), 0 0 30px rgba(255,255,255,0.035);
 }
 
+/* Wider CTA variant */
+.btn-wide {
+    padding-left: 200px;
+    padding-right: 200px;
+    min-width: 260px;
+}
+
+/* Center helper for CTA inside grid container */
+.cta-center {
+    grid-column: 1 / -1;      /* span full grid width */
+    justify-self: center;     /* center within the grid */
+}
+
 /* Animációk */
 @keyframes float-text {
     0% { transform: translateY(0);}
@@ -378,55 +391,61 @@ body.page-loaded::before {
     opacity: 0.85;
     transition: opacity 200ms ease, transform 200ms ease;
     cursor: pointer;
-    text-shadow:
-        0 0 6px rgba(255,106,0,0.25),
-        0 0 12px rgba(255,106,0,0.15);
+    text-shadow: none;
+    position: relative;
 }
+
+/* Neon glow réteg a felirat mögé (jobban animálható, mint text-shadow) */
+/* glow réteg eltávolítva */
 .pill-caption:hover {
     opacity: 1;
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.06);
     color: #fff;
     text-shadow:
-        0 0 8px rgba(255,140,0,0.5),
-        0 0 16px rgba(255,140,0,0.35),
-        0 0 28px rgba(255,140,0,0.25),
-        0 0 40px rgba(255,140,0,0.15);
-    animation: neon-pulse 1.8s ease-in-out infinite;
+        0 0 6px rgba(255,255,255,0.25),
+        0 0 12px rgba(255,255,255,0.15);
+    animation: none;
 }
-.pill-caption:active { transform: translateY(1px) scale(0.98); }
+    /* Az első hover után maradjon a neon (fehér glow) tartósan */
+    .pill-caption.neon-locked {
+        color: #fff;
+        text-shadow:
+            0 0 6px rgba(255,255,255,0.25),
+            0 0 12px rgba(255,255,255,0.15);
+    }
+/* Hoverkor a glow réteg is erősebb legyen */
+/* glow réteg erősítése eltávolítva */
+.pill-caption:active {
+    /* azonos méret kattintáskor, mint hover */
+    transform: translateY(-2px) scale(1.06);
+}
 
 /* Hover kizárólag a feliraton aktiválja a neon és scale hatást */
 
-@keyframes neon-pulse {
-    0%, 100% { text-shadow:
-        0 0 8px rgba(255,140,0,0.5),
-        0 0 16px rgba(255,140,0,0.35),
-        0 0 28px rgba(255,140,0,0.25),
-        0 0 40px rgba(255,140,0,0.15); }
-    50% { text-shadow:
-        0 0 6px rgba(255,180,0,0.45),
-        0 0 12px rgba(255,180,0,0.30),
-        0 0 22px rgba(255,180,0,0.20),
-        0 0 32px rgba(255,180,0,0.12); }
-}
+/* neon pulzus animáció eltávolítva */
 
 /* Aktivált állapot: kattintás után maradjon nagyobb */
 .pill-caption.active {
+    /* kattintás után: méret maradjon, külön neon ne erősödjön */
     transform: translateY(-2px) scale(1.06);
     opacity: 1;
 }
 
 /* Fade behavior for caption too */
 .pill-caption.fade {
-    transition: opacity 2s ease;
+    transition: opacity 2s ease, transform 0s;
     opacity: 0 !important;
     pointer-events: none; /* ne tartsa aktívan a hover állapotot */
+    /* maradjon nagyobb a fade alatt is */
+    transform: translateY(-2px) scale(1.06);
 }
 /* Hover esetén is maradjon a fade */
 .pill-wrap:hover .pill-caption.fade,
 .pill-caption.fade:hover {
     opacity: 0 !important;
 }
+/* A glow réteg fokozatosan halványuljon a fade alatt */
+/* glow réteg teljesen eltávolítva */
 
 .splash-overlay.hidden {
     opacity: 0;

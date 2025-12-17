@@ -10,37 +10,41 @@
     const pillAudio = document.getElementById('pill-audio');
     const volumeToggle = document.getElementById('volume-toggle');
     const DEFAULT_AUDIO_VOLUME = 0.15; // halkabb (5%)
+    let isRevealing = false; // megakadályozza a többszöri aktiválást
 
     function revealFromSplash() {
         if (splash) {
             const pill = splash.querySelector('.pill-img');
-            // 2s pirula fade, majd +2s header megjelenés és zene
+            // 1s késleltetés, majd 2s pirula+felirat fade, utána +2s header és zene
             if (pill) {
-                // indítsuk a pirula fadet
-                pill.classList.add('fade');
                 const caption = splash.querySelector('.pill-caption');
-                if (caption) caption.classList.add('fade');
 
-                // a splash marad fekete háttér, ne ugorjon el azonnal
-                // 2s után jelenjen meg a header (page-loaded), de a splash még legyen látható
+                // várjunk 1 másodpercet, mielőtt elindul a fade
                 setTimeout(() => {
-                    document.body.classList.remove('splash-visible');
-                    document.body.classList.add('page-loaded');
+                    pill.classList.add('fade');
+                    if (caption) caption.classList.add('fade');
 
-                    // még várunk további 2s, mielőtt a splash teljesen eltűnik és a zene indul
+                    // 2s fade után jelenjen meg a header (page-loaded), de a splash még legyen látható
                     setTimeout(() => {
-                        splash.classList.add('hidden');
-                        splash.addEventListener('transitionend', () => {
-                            if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
-                        }, { once: true });
+                        document.body.classList.remove('splash-visible');
+                        document.body.classList.add('page-loaded');
 
-                        if (audio) {
-                            audio.volume = DEFAULT_AUDIO_VOLUME;
-                            audio.muted = false;
-                            audio.play().catch(()=>{ /* autoplay blokkolva lehet */ });
-                        }
+                        // még várunk további 2s, mielőtt a splash teljesen eltűnik és a zene indul
+                        setTimeout(() => {
+                            splash.classList.add('hidden');
+                            splash.addEventListener('transitionend', () => {
+                                if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
+                                isRevealing = false;
+                            }, { once: true });
+
+                            if (audio) {
+                                audio.volume = DEFAULT_AUDIO_VOLUME;
+                                audio.muted = false;
+                                audio.play().catch(()=>{ /* autoplay blokkolva lehet */ });
+                            }
+                        }, 2000);
                     }, 2000);
-                }, 2000);
+                }, 1000);
             } else {
                 // fallback: ha nincs pill elem
                 splash.classList.add('hidden');
@@ -79,10 +83,17 @@
 
         // Caption ugyanúgy viselkedik
         if (caption) {
+            // első hoverkor rögzítsük a neon állapotot
+            const lockNeon = () => caption.classList.add('neon-locked');
+            caption.addEventListener('mouseenter', lockNeon, { once: true });
             caption.setAttribute('tabindex', '0');
             const handleActivate = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                if (isRevealing) return; // már folyamatban
+                isRevealing = true;
+                caption.style.pointerEvents = 'none';
+                caption.setAttribute('aria-disabled', 'true');
                 if (pillAudio) {
                     pillAudio.volume = DEFAULT_AUDIO_VOLUME;
                     pillAudio.muted = false;
