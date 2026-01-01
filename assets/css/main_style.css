@@ -1,3 +1,152 @@
+/* ARCÁPOLÁSI KÉRDŐÍV */
+#skincare-quiz {
+    max-width: 420px;
+    margin: 48px auto 0 auto;
+    background: rgba(34,34,34,0.85);
+    border-radius: 18px;
+    box-shadow: 0 4px 32px 0 rgba(0,0,0,0.18);
+    padding: 32px 28px 28px 28px;
+    animation: fadeIn 0.7s cubic-bezier(.4,2,.6,1);
+}
+#skincare-quiz h3 {
+    font-size: 1.5rem;
+    margin-bottom: 18px;
+    letter-spacing: 0.04em;
+}
+#skincareForm label {
+    display: block;
+    margin-bottom: 22px;
+    font-size: 1.08rem;
+    color: var(--text);
+}
+#skincareForm select {
+    margin-top: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--muted);
+    background: var(--charcoal);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s;
+}
+#skincareForm select:focus {
+    border: 1.5px solid #ff6a00;
+}
+.quiz-step {
+    animation: fadeIn 0.5s cubic-bezier(.4,2,.6,1);
+}
+.next-btn, .prev-btn, .submit-btn {
+    background: #ff6a00;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    margin: 0 8px 8px 0;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+}
+.next-btn:hover, .prev-btn:hover, .submit-btn:hover {
+    background: #ff8c1a;
+}
+#skincareResult {
+    background: rgba(30,30,30,0.92);
+    border-radius: 12px;
+    padding: 24px 18px;
+    margin-top: 18px;
+    animation: fadeIn 0.7s cubic-bezier(.4,2,.6,1);
+}
+#skincareResult h4 {
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-size: 1.13rem;
+    color: #ff6a00;
+}
+#skincareResult ul {
+    margin-bottom: 10px;
+    margin-left: 18px;
+    color: var(--text);
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+}
+/* DAILY CHECKLIST DROPDOWN */
+.daily-checklist {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin: 40px 0 60px 0;
+    flex-wrap: wrap;
+}
+
+.dropdown-checklist {
+    position: relative;
+    min-width: 220px;
+    text-align: left;
+}
+
+.dropdown-toggle {
+    width: 100%;
+    padding: 16px 24px;
+    background: var(--charcoal);
+    color: var(--text);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.12);
+    transition: background 0.3s, box-shadow 0.3s;
+    outline: none;
+}
+.dropdown-toggle:hover, .dropdown-toggle:focus {
+    background: var(--graphite);
+    box-shadow: 0 4px 24px 0 var(--glow);
+}
+
+.dropdown-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 110%;
+    background: var(--dark);
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.18);
+    padding: 18px 24px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px) scaleY(0.95);
+    transition: opacity 0.35s cubic-bezier(.4,2,.6,1), transform 0.35s cubic-bezier(.4,2,.6,1);
+    z-index: 2;
+}
+.dropdown-checklist.open .dropdown-content {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scaleY(1);
+}
+.dropdown-content label {
+    font-size: 1rem;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dropdown-content input[type="checkbox"] {
+    accent-color: #ff6a00;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border-radius: 4px;
+    transition: box-shadow 0.2s;
+}
+.dropdown-content input[type="checkbox"]:checked {
+    box-shadow: 0 0 0 2px #ff6a00;
+}
 :root {
     --graphite: #1F2022;
     --charcoal: #2B2B2B;
