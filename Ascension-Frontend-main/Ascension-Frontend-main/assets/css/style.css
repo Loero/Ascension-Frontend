@@ -1,0 +1,721 @@
+:root {
+    --charcoal: #2B2B2B;       /* Charcoal Chrome */
+    --gunmetal: #3A3F44;      /* Gunmetal Gray */
+    --slate: #4A4E50;         /* Slate Gray Chrome */
+    --dark-steel: #262A2D;    /* Dark Steel */
+    --graphite: #1F2022;      /* Graphite Chrome */
+    --anthracite: #2E2E2E;    /* Anthracite */
+    --shadow-chrome: #353839; /* Shadow Chrome */
+
+    --accent: #2E2E2E;
+    --bg: linear-gradient(180deg, var(--graphite) 0%, var(--charcoal) 60%, #0b0b0b 100%);
+    --text: #f5f5f5;
+    --muted: #bdbdbd;
+    --glow: rgba(255,106,0,0.25);
+
+    --pill-duration: 2s;
+    --splash-fade-duration: 2s;
+    --page-anim-duration: 1200ms;
+    --section-anim-duration: 1800ms; /* Duration for section animations */
+    --chrome-gradient-duration: 5s; /* Duration for chrome gradient animations (faster, more visible) */
+    --chrome-gradient-opacity: 0.2; /* stronger but still subtle */
+    --chrome-sheen-duration: 6s; /* sheen movement duration */
+    --page-anim-delay-header: 500ms;
+    --page-anim-delay-section: 900ms;
+    --video-transition: 1.6s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Hide scrollbar but keep scrolling */
+html, body {
+    /* Firefox */
+    scrollbar-width: none;
+    /* IE 10+ */
+    -ms-overflow-style: none;
+}
+
+/* WebKit (Chrome, Safari, új Edge) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+}
+
+body, html {
+    height: 100%;
+    /* Use Cinzel webfont (imported in index.html), fall back to Copperplate/Gothic variants */
+    font-family: 'Cinzel', 'Copperplate Gothic', 'Copperplate', 'Bebas Neue', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+/* Apply chrome lighting across major elements */
+body, html {
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* subtle chrome sheen on header background */
+.header-bg {
+    background: linear-gradient(135deg,
+        rgba(74,78,80,0.95) 0%,
+        rgba(58,63,68,0.85) 35%,
+        rgba(47,50,52,0.75) 65%,
+        rgba(20,20,20,0.95) 100%);
+    filter: saturate(1.05);
+}
+
+/* overlay becomes subtle metallic wash */
+.overlay {
+    background: linear-gradient(180deg,
+        rgba(255,255,255,0.02) 0%,
+        rgba(0,0,0,0.45) 60%,
+        rgba(0,0,0,0.65) 100%);
+    mix-blend-mode: multiply;
+}
+
+/* Header */
+header {
+    height: 100vh; /* teljes magasság induláskor */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    transition: height 1.4s ease;
+}
+
+/* Hangerő gomb elhelyezés a jobb felső sarokban */
+.volume-toggle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    background: rgba(0,0,0,0.4);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: transform 160ms ease, background 160ms ease, opacity 160ms ease;
+}
+
+.volume-toggle:hover { transform: scale(1.06); }
+.volume-toggle:active { transform: scale(0.98); }
+.volume-toggle[aria-pressed="true"] { background: rgba(0,0,0,0.6); }
+
+/* ikon csere állapottól függően (JS frissíti) */
+.volume-toggle.muted::after { content: "🔇"; }
+.volume-toggle:not(.muted)::after { content: "🔊"; }
+.volume-toggle { font-size: 18px; line-height: 1; }
+
+/* Header alap háttér */
+.header-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2b2b2b 100%);
+    z-index: 0;
+}
+
+/* Videó a szürke réteg helyén */
+.header-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    filter: brightness(0.4) contrast(1.2); /* sötétítés + kontraszt */
+    transition: opacity var(--video-transition) ease, transform var(--video-transition) ease;
+    will-change: opacity, transform;
+}
+
+/* Szöveg a videó fölött */
+.header-content {
+    position: relative;
+    z-index: 2;
+    animation: float-text 3s infinite ease-in-out alternate;
+    transition: transform 1.2s ease, font-size 1.2s ease, margin-top 1.2s ease;
+}
+
+header h1 {
+    color: var(--text);
+    text-shadow:
+        0 0 6px rgba(255,255,255,0.06),
+        0 0 12px rgba(255,255,255,0.04),
+        0 0 22px var(--glow),
+        0 6px 25px rgba(0,0,0,0.6);
+    font-family: inherit;
+    letter-spacing: 0.06em;
+}
+
+header p {
+    font-size: 2rem;
+    margin-top: 20px;
+    color: var(--muted);
+}
+
+/* Alapértelmezett nagy címméret a headerben */
+header .header-content h1 {
+    font-size: 6rem;
+    line-height: 1;
+}
+
+header h1, header p {
+    text-shadow: 
+        0 0 10px rgba(255,255,255,0.4),
+        0 0 20px rgba(255,255,255,0.3),
+        0 0 30px rgba(255,106,0,0.5);
+}
+
+header.shrink {
+    height: 50vh; /* összemegy görgetéskor */
+}
+
+/* Szöveg méretezés scroll hatásra */
+header.shrink .header-content h1 {
+    font-size: 3rem; /* kisebb címméret görgetéskor */
+}
+
+header.shrink .header-content p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+
+
+/* Section */
+section {
+    padding: 100px 20px;
+    background: var(--bg);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px) scale(0.995);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+section h2 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: var(--text);
+}
+
+section p {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+    color: var(--muted);
+}
+
+/* Gombok */
+.btn-accent {
+    display: inline-block;
+    padding: 15px 40px;
+    font-size: 1.4rem;
+    /* Chrome-style grey/black gradient */
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(30,30,30,0.98) 100%);
+    color: var(--text);
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 0 28px rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.03);
+    transition: all 0.3s ease;
+    will-change: transform;
+    animation: float-btn 4s ease-in-out infinite;
+    font-family: inherit;
+}
+
+.btn-accent:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.6), 0 0 30px rgba(255,255,255,0.035);
+}
+
+/* Wider CTA variant */
+.btn-wide {
+    padding-left: 200px;
+    padding-right: 200px;
+    min-width: 260px;
+}
+
+/* Center helper for CTA inside grid container */
+.cta-center {
+    grid-column: 1 / -1;      /* span full grid width */
+    justify-self: center;     /* center within the grid */
+}
+
+/* Animációk */
+@keyframes float-text {
+    0% { transform: translateY(0);}
+    100% { transform: translateY(-15px);}
+}
+
+@keyframes float-btn {
+    0%  { transform: translateY(0) translateX(0) rotate(0deg); }
+    15% { transform: translateY(-6px) translateX(-2px) rotate(-0.6deg); }
+    30% { transform: translateY(-10px) translateX(2px) rotate(0.6deg); }
+    50% { transform: translateY(-8px) translateX(-1px) rotate(-0.3deg); }
+    70% { transform: translateY(-6px) translateX(1px) rotate(0.4deg); }
+    85% { transform: translateY(-3px) translateX(-1px) rotate(-0.2deg); }
+    100%{ transform: translateY(0) translateX(0) rotate(0deg); }
+}
+
+/* Section reveal */
+section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Finomabb header shrink állapot (opcionális) */
+header.shrink .overlay {
+    background: rgba(0,0,0,0.55);
+}
+
+/* Page load fade-in */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px) scale(0.998); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* when JS sets .page-loaded on body, play the intro animations */
+.page-loaded .header-content {
+    animation: fadeInUp var(--page-anim-duration) cubic-bezier(.22,.9,.32,1) both, float-text 3s infinite ease-in-out alternate;
+    animation-delay: var(--page-anim-delay-header);
+}
+
+.page-loaded section {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: var(--page-anim-delay-section);
+}
+
+/* subtle staggered reveal for section children */
+.chrome-section .text h2,
+.chrome-section .text p,
+.chrome-section .text .btn-accent,
+.ba-frame {
+    opacity: 0;
+    transform: translateY(6px) scale(0.998);
+}
+
+.page-loaded .chrome-section .text h2 {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: calc(var(--page-anim-delay-section) + 0ms);
+}
+.page-loaded .chrome-section .text p {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: calc(var(--page-anim-delay-section) + 120ms);
+}
+.page-loaded .chrome-section .text .btn-accent {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: calc(var(--page-anim-delay-section) + 240ms);
+}
+.page-loaded .ba-frame {
+    animation: fadeInUp var(--section-anim-duration) cubic-bezier(.22,.9,.32,1) both;
+    animation-delay: calc(var(--page-anim-delay-section) + 200ms);
+}
+
+/* Full-page black fade-in */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 4s ease;
+    pointer-events: auto; /* ha szeretnéd tiltani az interakciót betöltés közben, hagyd így */
+}
+
+/* amikor JS hozzáadja a .page-loaded osztályt, fedő elhalványul és nem akadályoz interakciót */
+body.page-loaded::before {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.audio-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10001;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    border: 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: transform .15s ease, opacity .2s ease;
+}
+.audio-btn:hover { transform: translateY(-2px); }
+.audio-btn[aria-pressed="true"] { background: rgba(255,106,0,0.95); color: #000; }
+
+/* SPLASH stílusok */
+.splash-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    z-index: 10000;
+    /* lassabb eltűnés: 4000ms */
+    transition: opacity var(--splash-fade-duration) ease, visibility var(--splash-fade-duration) ease;
+    opacity: 1;
+    visibility: visible;
+    /* csak a pirula legyen kattintható: az overlay maga ne fogadjon kattintást */
+    pointer-events: none;
+}
+.pill-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; pointer-events: auto; }
+.pill-caption {
+    color: var(--muted);
+    font-family: 'Cinzel', 'Bebas Neue', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    transition: opacity 200ms ease, transform 200ms ease;
+    cursor: pointer;
+    text-shadow: none;
+    position: relative;
+}
+
+/* Neon glow réteg a felirat mögé (jobban animálható, mint text-shadow) */
+/* glow réteg eltávolítva */
+.pill-caption:hover {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.06);
+    color: #fff;
+    text-shadow:
+        0 0 6px rgba(255,255,255,0.25),
+        0 0 12px rgba(255,255,255,0.15);
+    animation: none;
+}
+    /* Az első hover után maradjon a neon (fehér glow) tartósan */
+    .pill-caption.neon-locked {
+        color: #fff;
+        text-shadow:
+            0 0 6px rgba(255,255,255,0.25),
+            0 0 12px rgba(255,255,255,0.15);
+    }
+/* Hoverkor a glow réteg is erősebb legyen */
+/* glow réteg erősítése eltávolítva */
+.pill-caption:active {
+    /* azonos méret kattintáskor, mint hover */
+    transform: translateY(-2px) scale(1.06);
+}
+
+/* Hover kizárólag a feliraton aktiválja a neon és scale hatást */
+
+/* neon pulzus animáció eltávolítva */
+
+/* Aktivált állapot: kattintás után maradjon nagyobb */
+.pill-caption.active {
+    /* kattintás után: méret maradjon, külön neon ne erősödjön */
+    transform: translateY(-2px) scale(1.06);
+    opacity: 1;
+}
+
+/* Fade behavior for caption too */
+.pill-caption.fade {
+    transition: opacity 2s ease, transform 0s;
+    opacity: 0 !important;
+    pointer-events: none; /* ne tartsa aktívan a hover állapotot */
+    /* maradjon nagyobb a fade alatt is */
+    transform: translateY(-2px) scale(1.06);
+}
+/* Hover esetén is maradjon a fade */
+.pill-wrap:hover .pill-caption.fade,
+.pill-caption.fade:hover {
+    opacity: 0 !important;
+}
+/* A glow réteg fokozatosan halványuljon a fade alatt */
+/* glow réteg teljesen eltávolítva */
+
+.splash-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* nagyobb kép (meglévő beállítás megtartva) */
+.pill-img {
+    width: 220px;
+    max-width: 55vw;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 16px 40px rgba(0,0,0,0.7)) saturate(1.05);
+    transform-origin: center;
+    transition: transform 220ms ease;
+    /* finom lebegés */
+    animation: pill-float 4.5s ease-in-out infinite;
+    position: relative;
+    /* csak a felirat legyen interaktív */
+    pointer-events: none;
+    cursor: default;
+}
+
+/* kattintás utáni finom eltűnés (fade to black) */
+.pill-img.fade {
+    transition: opacity 2s ease;
+    opacity: 0;
+}
+
+/* lebegés animáció: enyhe fel-le mozgás és mikro-rotáció */
+@keyframes pill-float {
+    0%   { transform: translateY(0) rotateZ(0deg) scale(1); }
+    50%  { transform: translateY(-6px) rotateZ(0.6deg) scale(1.02); }
+    100% { transform: translateY(0) rotateZ(0deg) scale(1); }
+}
+
+/* sheen effekt: átfutó fénycsík */
+.pill-img::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0) 35%,
+        rgba(255,255,255,0.20) 50%,
+        rgba(255,255,255,0) 65%);
+    mix-blend-mode: screen;
+    opacity: 0.0;
+    transform: translateX(-120%) skewX(-18deg);
+    pointer-events: none;
+    animation: pill-sheen 6s ease-in-out infinite;
+}
+
+@keyframes pill-sheen {
+    0%, 20% { opacity: 0; transform: translateX(-120%) skewX(-18deg); }
+    30%     { opacity: 0.18; }
+    50%     { opacity: 0.24; transform: translateX(120%) skewX(-18deg); }
+    60%,100%{ opacity: 0; transform: translateX(120%) skewX(-18deg); }
+}
+
+/* hover: minimális billenés */
+.pill-img:hover { transform: translateY(-2px) rotateZ(0.4deg) scale(1.03); }
+
+/* kattintáskor enyhe "megnyomás" */
+.pill-img:active { transform: translateY(1px) scale(0.98); }
+
+
+/* biztosítjuk, hogy a fő tartalom ne legyen interaktív a splash alatt */
+body.splash-visible { overflow: hidden; }
+
+/* Chrome lighting section */
+.chrome-section {
+    padding: 64px 20px;
+    background: linear-gradient(180deg,
+        rgba(30,30,30,0.95) 0%,
+        rgba(44,46,48,0.9) 35%,
+        rgba(20,20,21,0.85) 100%);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    display: block;
+}
+
+/* layout innen a section belsejére */
+.chrome-section .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 520px;
+    gap: 40px;
+    align-items: center;
+}
+
+/* szöveg blokk finom króm fényekkel */
+.chrome-section .text h2 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    color: #fff;
+    text-shadow:
+        0 1px 0 rgba(255,255,255,0.02),
+        0 8px 30px rgba(0,0,0,0.6);
+}
+
+.chrome-section .text p {
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+/* before-after frame */
+.before-after { width: 100%; display:flex; justify-content:center; }
+.ba-frame {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    height: 340px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25));
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 0 30px rgba(255,106,0,0.04); /* subtle accent glow */
+    border: 1px solid rgba(255,255,255,0.03);
+    will-change: transform;
+    animation: ba-float 6s ease-in-out infinite;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    /* enforce rounded clipping during transforms */
+    clip-path: inset(0 round 12px);
+}
+
+/* képek rétegezve, before alatt, after fölött (tetszés szerint csúsztatható később) */
+.ba-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* show the full image without cropping */
+    object-fit: contain;
+    object-position: center center;
+    background: #000; /* fill empty space when using contain */
+    /* match parent's rounded corners to avoid square artifacts on transform */
+    border-radius: inherit;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+    display: block;
+    transform-origin: center;
+    transition: transform 900ms ease, opacity 900ms ease;
+}
+
+/* alap: before teljesen látszik, after 40% átlátszó (ezt variálhatod) */
+.ba-before { z-index: 1; transform: scale(1.02); filter: saturate(0.9) brightness(0.95); }
+.ba-after  { z-index: 2; opacity: 0.0; filter: saturate(1.05) contrast(1.03); }
+
+/* overlay finom fénnyel a króm hatásért */
+.ba-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(120deg, rgba(255,255,255,0.03), rgba(0,0,0,0.22)),
+        radial-gradient(800px 200px at 10% 20%, rgba(255,255,255,0.035), transparent 15%),
+        radial-gradient(500px 120px at 90% 80%, rgba(255,106,0,0.02), transparent 20%);
+    mix-blend-mode: overlay;
+    z-index: 3;
+}
+
+/* labels: chrome-ish small badges with subtle float animation */
+.ba-label {
+    position: absolute;
+    z-index: 6;
+    display: inline-block;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.35));
+    color: var(--text);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45), 0 0 18px rgba(255,106,0,0.03);
+    transition: transform 220ms ease, opacity 220ms ease;
+    will-change: transform;
+    animation: float-label 4s ease-in-out infinite;
+}
+
+/* pozíciók */
+.ba-label-before { left: 12px; top: 12px; }
+.ba-label-after  { right: 12px; bottom: 12px; }
+
+/* floating animáció */
+@keyframes float-label {
+    0%   { transform: translateY(0px) translateX(0);   opacity: 1; }
+    20%  { transform: translateY(-4px) translateX(-2px);  opacity: 0.98; }
+    50%  { transform: translateY(-6px) translateX(1px);   opacity: 0.96; }
+    80%  { transform: translateY(-3px) translateX(-1px);  opacity: 0.98; }
+    100% { transform: translateY(0px) translateX(0);   opacity: 1; }
+}
+
+/* interakció: hoverkor fedjük be az after képet (opcionális) */
+.ba-frame:hover .ba-after {
+    opacity: 1;
+    transform: scale(1.01);
+}
+
+/* kisebb képernyőre stack és kisebb méretek */
+@media (max-width: 880px) {
+    .chrome-section .container { grid-template-columns: 1fr; gap: 28px; padding: 20px; }
+    .ba-frame { max-width: 100%; height: 260px; border-radius: 10px; }
+    .ba-label { font-size: 0.8rem; padding: 5px 8px; }
+}
+
+/* ha szeretnéd, finomabb központi króm fény a section tetején */
+.chrome-section::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -40px;
+    width: 420px;
+    height: 120px;
+    background: radial-gradient(closest-side, rgba(255,255,255,0.03), transparent 40%);
+    pointer-events: none;
+    filter: blur(18px);
+}
+
+/* Subtle animated chrome gradient overlay */
+.chrome-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg,
+        rgba(255,255,255,0.06) 0%,
+        rgba(255,106,0,0.14) 25%,
+        rgba(255,255,255,0.04) 50%,
+        rgba(20,20,20,0.12) 75%,
+        rgba(255,255,255,0.04) 100%);
+    /* larger background for smoother shifting */
+    background-size: 400% 400%;
+    mix-blend-mode: overlay;
+    opacity: var(--chrome-gradient-opacity);
+    transform: translateZ(0);
+    animation: chromeGradientShift var(--chrome-gradient-duration) ease-in-out infinite alternate;
+}
+
+@keyframes chromeGradientShift {
+    0%   { background-position: 10% 30%; }
+    50%  { background-position: 90% 70%; }
+    100% { background-position: 10% 30%; }
+}
+
+/* Animate the subtle central sheen so it's more visible */
+.chrome-section::before {
+    animation: chromeSheen var(--chrome-sheen-duration) ease-in-out infinite;
+}
+
+@keyframes chromeSheen {
+    0% { transform: translateX(-8px) translateY(-18px) scale(1); opacity: 0.06; }
+    40% { transform: translateX(18px) translateY(6px) scale(1.06); opacity: 0.12; }
+    100% { transform: translateX(-8px) translateY(-18px) scale(1); opacity: 0.06; }
+}
+
+/* laza lebegő + enyhe remegés a before/after keretnek */
+@keyframes ba-float {
+    0%  { transform: translateY(0) translateX(0) rotate(0deg); }
+    25% { transform: translateY(-3px) translateX(-1px) rotate(-0.25deg); }
+    50% { transform: translateY(-2px) translateX(1px) rotate(0.2deg); }
+    75% { transform: translateY(-4px) translateX(-1px) rotate(-0.15deg); }
+    100%{ transform: translateY(0) translateX(0) rotate(0deg); }
+}

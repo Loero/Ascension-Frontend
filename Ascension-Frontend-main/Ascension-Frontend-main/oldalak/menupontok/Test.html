@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ascension – Test</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../assets/css/main_style.css" />
+  </head>
+  <body>
+    <header class="core-header">
+      <a href="../main.html"><h1>Ascension</h1></a>
+      <nav class="core-nav">
+        <a href="../menupontok/Test.html">Test</a>
+        <a href="../menupontok/Arc.html">Arc</a>
+        <a href="../menupontok/Mental.html">Mentál</a>
+      </nav>
+    </header>
+
+    <main class="mainwindow-content">
+      <h2>Test</h2>
+
+      <!-- 1. Adatok lekérdezése -->
+      <section class="data-input-section">
+        <h3>Személyes Adatok</h3>
+        <div class="form-container">
+          <div class="form-group">
+            <label for="age">Életkor:</label>
+            <input
+              type="number"
+              id="age"
+              placeholder="pl. 25"
+              min="10"
+              max="100"
+            />
+          </div>
+          <div class="form-group">
+            <label for="weight">Súly (kg):</label>
+            <input
+              type="number"
+              id="weight"
+              placeholder="pl. 75"
+              min="30"
+              max="300"
+            />
+          </div>
+          <div class="form-group">
+            <label for="height">Magasság (cm):</label>
+            <input
+              type="number"
+              id="height"
+              placeholder="pl. 180"
+              min="100"
+              max="250"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender">Nem:</label>
+            <select id="gender">
+              <option value="">Válassz...</option>
+              <option value="male">Férfi</option>
+              <option value="female">Nő</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="activity">Aktivitási szint:</label>
+            <select id="activity">
+              <option value="">Válassz...</option>
+              <option value="1.2">Ülő életmód</option>
+              <option value="1.375">Könnyű aktivitás (1-3 nap/hét)</option>
+              <option value="1.55">Közepes aktivitás (3-5 nap/hét)</option>
+              <option value="1.725">Aktív (6-7 nap/hét)</option>
+              <option value="1.9">Nagyon aktív (napi 2x edzés)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="goal">Cél:</label>
+            <select id="goal">
+              <option value="">Válassz...</option>
+              <option value="deficit">Fogyás</option>
+              <option value="maintain">Tartás</option>
+              <option value="surplus">Tömegnövelés</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="experience">Edzés tapasztalat:</label>
+            <select id="experience">
+              <option value="">Válassz...</option>
+              <option value="beginner">Kezdő (0-1 év)</option>
+              <option value="intermediate">Haladó (1-3 év)</option>
+              <option value="advanced">Profi (3+ év)</option>
+            </select>
+          </div>
+          <button class="btn-calculate" onclick="calculateAndGenerate()">
+            Terv Generálása
+          </button>
+        </div>
+      </section>
+
+      <!-- 2. Kalória számítás eredmény -->
+      <section id="calorie-result" class="result-section" style="display: none">
+        <h3>Kalória Cél</h3>
+        <div class="result-card">
+          <p class="result-label">BMR (Alap metabolizmus):</p>
+          <p id="bmr-value" class="result-value">-</p>
+        </div>
+        <div class="result-card">
+          <p class="result-label">TDEE (Napi kalóriaigény):</p>
+          <p id="tdee-value" class="result-value">-</p>
+        </div>
+        <div class="result-card highlight">
+          <p class="result-label">Cél Kalória (céloddal):</p>
+          <p id="goal-value" class="result-value">-</p>
+        </div>
+        <div class="macro-breakdown">
+          <h4>Makrók ajánlása:</h4>
+          <p id="protein-value">Fehérje: -</p>
+          <p id="fat-value">Zsír: -</p>
+          <p id="carb-value">Szénhidrát: -</p>
+        </div>
+      </section>
+
+      <!-- 2/b. Napi Kalória Számláló (USDA adatbázissal) -->
+      <section id="food-tracker" class="result-section">
+        <h3>Napi Kalória Számláló</h3>
+        <div class="form-container">
+          <div class="food-control-row">
+            <div class="form-group">
+              <label for="food-search">Étel keresése:</label>
+              <input
+                type="text"
+                id="food-search"
+                placeholder="pl. alma, csirke mell"
+              />
+            </div>
+            <div class="form-group">
+              <label for="food-grams">Mennyiség (gramm):</label>
+              <input
+                type="number"
+                id="food-grams"
+                placeholder="pl. 150"
+                min="1"
+              />
+            </div>
+            <button class="btn-calculate" id="add-food-btn">Hozzáadás</button>
+          </div>
+          <div id="food-results" class="result-card"></div>
+          <div id="food-preview" class="result-card food-preview"></div>
+        </div>
+
+        <div class="result-card">
+          <h4>
+            Mai tételek <span id="food-count" class="food-count">(0)</span>
+          </h4>
+          <div id="food-list" class="food-list"></div>
+        </div>
+
+        <div class="result-card highlight">
+          <h4>Összesítés (ma)</h4>
+          <p id="total-calories">Kalória: 0 kcal</p>
+          <p id="total-protein">Fehérje: 0 g</p>
+          <p id="total-carbs">Szénhidrát: 0 g</p>
+        </div>
+      </section>
+
+      <!-- 3. Edzésterv -->
+      <section
+        id="training-plan"
+        class="training-section"
+        style="display: none"
+      >
+        <h3>Személyre Szabott Edzésterv</h3>
+        <div id="plan-container"></div>
+      </section>
+      <!-- 4. Progressive Overload Tracker -->
+      <section
+        id="tracker-section"
+        class="tracker-section"
+        style="display: none"
+      >
+        <h3>Progressive Overload Tracker</h3>
+        <p class="tracker-info">
+          Add meg a mai edzésed súlyait az alábbi gyakorlatokhoz:
+        </p>
+
+        <div id="exercise-inputs"></div>
+
+        <button class="btn-save-workout" onclick="saveWorkoutSession()">
+          Edzés Mentése
+        </button>
+
+        <div class="tracker-history">
+          <h4>Előrehaladás Történet</h4>
+          <div id="workout-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="../../assets/js/test.js"></script>
+  </body>
+</html>
