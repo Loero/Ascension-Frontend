@@ -1,0 +1,7 @@
+# Backend ignores
+node_modules/
+.env
+uploads/
+# OS/Editor junk
+.DS_Store
+Thumbs.db
